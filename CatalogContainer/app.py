@@ -36,11 +36,29 @@ def info(item_id):
     for r in read_all():
         if int(r["id"]) == item_id:
             c = cast_row(r)
-            return jsonify({
-                "title": c["title"],
-                "quantity": c["quantity"],
-                "price": c["price"]
-            })
+            return jsonify({"title": c["title"], "quantity": c["quantity"], "price": c["price"]})
+    abort(404)
+
+@app.post("/update")
+def update():
+    data = request.get_json(force=True)
+    item_id = int(data["id"])
+    delta_qty = int(data.get("delta_qty", 0))
+    new_price = data.get("new_price", None)
+
+    rows = read_all()
+    for i, r in enumerate(rows):
+        if int(r["id"]) == item_id:
+            q = int(r["quantity"]) + delta_qty
+            if q < 0:
+                abort(400, "quantity would be negative")
+            r["quantity"] = str(q)
+            if new_price is not None:
+                r["price"] = str(float(new_price))
+            rows[i] = r
+            write_all(rows)
+            return jsonify({"ok": True, "quantity": q, "price": float(r["price"])})
+
     abort(404)
 
 if __name__ == "__main__":
