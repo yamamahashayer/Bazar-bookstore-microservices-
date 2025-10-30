@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, abort
 import csv, os
 
 app = Flask(__name__)
@@ -30,6 +30,18 @@ def search(topic):
         if cast_row(r)["topic"] == topic
     ]
     return jsonify(items)
+
+@app.get("/info/<int:item_id>")
+def info(item_id):
+    for r in read_all():
+        if int(r["id"]) == item_id:
+            c = cast_row(r)
+            return jsonify({
+                "title": c["title"],
+                "quantity": c["quantity"],
+                "price": c["price"]
+            })
+    abort(404)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
