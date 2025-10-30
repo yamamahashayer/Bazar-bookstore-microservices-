@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 import csv, os
 
 app = Flask(__name__)
@@ -21,6 +21,15 @@ def cast_row(r):
         "price": float(r["price"]),
         "quantity": int(r["quantity"])
     }
+
+@app.get("/search/<topic>")
+def search(topic):
+    items = [
+        {"id": cast_row(r)["id"], "title": cast_row(r)["title"]}
+        for r in read_all()
+        if cast_row(r)["topic"] == topic
+    ]
+    return jsonify(items)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
