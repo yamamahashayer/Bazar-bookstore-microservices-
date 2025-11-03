@@ -1,0 +1,25 @@
+
+version: '3'
+
+services:
+  catalog:
+    build: ./CatalogContainer
+    container_name: catalog_service
+    ports:
+      - "5000:500"
+
+  order:
+    build: ./OrderContainer
+    container_name: order_service
+    ports:
+      - "5001:5001"
+    depends_on:
+      - catalog
+  frontend:
+    build: ./FrontendContainer
+    container_name: frontend_service
+    ports:
+      - "5002:5002"
+    depends_on:
+      - catalog
+      - order
