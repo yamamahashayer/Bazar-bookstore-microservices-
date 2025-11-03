@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, abort
 import csv, os, uuid, requests
 
-CATALOG_URL = os.environ.get("CATALOG_URL", "http://catalog:5001")
+CATALOG_URL = os.environ.get("CATALOG_URL", "http://catalog:5000")
 CSV_PATH = os.path.join(os.path.dirname(__file__), "data", "orders.csv")
 app = Flask(__name__)
 
@@ -33,4 +33,4 @@ def home():
     return jsonify({"routes": ["POST /purchase/<id>"], "catalog": CATALOG_URL})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5002)
+    app.run(host="0.0.0.0", port=5001)
