@@ -1,25 +1,44 @@
-
-version: '3'
-
 services:
   catalog:
-    build: ./CatalogContainer
-    container_name: catalog_service
+    build: ./Catalog
     ports:
       - "5000:5000"
 
-  order:
-    build: ./OrderContainer
-    container_name: order_service
+  catalog_replica1:
+    build: ./Catalog-replica1
     ports:
       - "5001:5001"
-    depends_on:
-      - catalog
-  frontend:
-    build: ./FrontendContainer
-    container_name: frontend_service
+
+  catalog_replica2:
+    build: ./Catalog-replica2
     ports:
       - "5002:5002"
+
+  order:
+    build: ./Order
+    ports:
+      - "5003:5003"
+    depends_on:
+      - catalog
+
+  order_replica1:
+    build: ./Order-replica1
+    ports:
+      - "5004:5004"
+    depends_on:
+      - catalog
+
+  order_replica2:
+    build: ./Order-replica2
+    ports:
+      - "5005:5005"
+    depends_on:
+      - catalog
+
+  frontend:
+    build: ./FrontendContainer
+    ports:
+      - "5006:5006"
     depends_on:
       - catalog
       - order

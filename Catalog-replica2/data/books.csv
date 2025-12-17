@@ -1,0 +1,9 @@
+id,title,topic,price,quantity
+1,Designing Distributed Systems,distributed,75,6
+2,Microservices Patterns,distributed,80,4
+3,Operating Systems Concepts,systems,65,7
+4,Computer Networks: A Top Down Approach,networks,70,5
+5,Introduction to Algorithms,algorithms,90,3
+6,Clean Code,software,55,8
+7,Database System Concepts,databases,68,6
+8,Artificial Intelligence A Modern Approach,ai,85,4
