@@ -14,19 +14,38 @@ def append_order(item_id, title):
 
 @app.post("/purchase/<int:item_id>")
 def purchase(item_id):
+    # 1) Get item info from catalog
     r = requests.get(f"{CATALOG_URL}/info/{item_id}")
     if r.status_code != 200:
         abort(404, "item not found")
+
     info = r.json()
     if info["quantity"] <= 0:
         abort(400, "out of stock")
 
-    upd = requests.post(f"{CATALOG_URL}/update", json={"id": item_id, "delta_qty": -1})
+    # 2) Invalidate cache in frontend BEFORE write
+    try:
+        FRONTEND_URL = "http://frontend:5002"  # docker service name
+        requests.post(f"{FRONTEND_URL}/invalidate/{item_id}", timeout=2)
+    except Exception as e:
+        print(f"[ORDER] warning: cache invalidation failed: {e}")
+
+    # 3) Update catalog (decrease quantity)
+    upd = requests.post(
+        f"{CATALOG_URL}/update",
+        json={"id": item_id, "delta_qty": -1}
+    )
     if upd.status_code != 200:
         abort(upd.status_code, upd.text)
 
+    # 4) Log the order
     append_order(item_id, info["title"])
-    return jsonify({"ok": True, "message": f"bought book {info['title']}"})
+
+    return jsonify({
+        "ok": True,
+        "message": f"bought book {info['title']}"
+    })
+
 
 @app.get("/")
 def home():
