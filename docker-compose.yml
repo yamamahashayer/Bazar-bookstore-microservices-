@@ -3,16 +3,23 @@ services:
     build: ./Catalog
     ports:
       - "5000:5000"
+    volumes:
+      - ./Catalog/data:/app/data
 
   catalog_replica1:
     build: ./Catalog-replica1
     ports:
       - "5001:5001"
+    volumes:
+      - ./Catalog/data:/app/data
 
   catalog_replica2:
     build: ./Catalog-replica2
     ports:
       - "5002:5002"
+    volumes:
+      - ./Catalog/data:/app/data
+
 
   order:
     build: ./Order
@@ -38,7 +45,7 @@ services:
   frontend:
     build: ./FrontendContainer
     ports:
-      - "5006:5006"
+      - "5006:5002"
     depends_on:
       - catalog
       - order
